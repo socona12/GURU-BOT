@@ -1,14 +1,57 @@
-import fetch from 'node-fetch'
-let handler = async (m, { text, usedPrefix, command }) => {
-if (!text) throw `*enter a request or an order to use the chatgpt*\n\n*—◉ 𝙴xample*\n*◉ ${usedPrefix + command}series 2022  netflix*\n*◉ ${usedPrefix + command} write a js code*`
-try {
-m.reply(`*wait sometime*`)
-let tiores = await fetch(`https://api.lolhuman.xyz/api/openai?apikey=${lolkeysapi}&text=${text}&user=user-unique-id`)
-let hasil = await tiores.json()
-m.reply(`${hasil.result}`.trim())
-} catch {
-throw `*𝙴𝚁𝚁𝙾𝚁*`
-}}
-handler.command = ['bro', 'chatgpt', 'ai', 'siri']
-handler.diamond = false
-export default handler
+import fetch from 'node-fetch';
+
+
+let handler = async (m, { text, conn, usedPrefix, command }) => {
+  if (!text && !(m.quoted && m.quoted.text)) {
+    throw `Please provide some text or quote a message to get a response.`;
+  }
+
+  if (!text && m.quoted && m.quoted.text) {
+    text = m.quoted.text;
+  }
+
+  try {
+    m.react(rwait)
+    let pingMsg = await conn.sendMessage(m.chat, { text: 'Thinking...' });
+    conn.sendPresenceUpdate('composing', m.chat);
+    const prompt = encodeURIComponent(text);
+
+
+    const guru1 = `${gurubot}/chatgpt?text=${prompt}`;
+    let response = await fetch(guru1);
+    let data = await response.json();
+    let result = data.result;
+
+ 
+    if (!result) {
+      const model = 'chatgpt';
+      const senderNumber = m.sender.replace(/[^0-9]/g, ''); 
+      const session = `GURU_BOT_${senderNumber}`;
+      const guru2 = `https://gurugpt.cyclic.app/gpt4?prompt=${prompt}&session=${session}&model=${model}`;
+      
+      response = await fetch(guru2);
+      data = await response.json();
+      result = data.data;
+    }
+
+    await conn.relayMessage(m.chat, {
+      protocolMessage: {
+        key: pingMsg.key,
+        type: 14,
+        editedMessage: {
+          conversation: result
+        }
+      }
+    }, {});
+    m.react(done)
+
+  } catch (error) {
+    console.error('Error:', error);
+    throw `*ERROR*`;
+  }
+};
+handler.help = ['chatgpt']
+handler.tags = ['AI']
+handler.command = ['bro', 'chatgpt', 'ai', 'gpt'];
+
+export default handler;

@@ -7,7 +7,7 @@ const handler = async (m, { conn }) => {
     const json = await res.json();
     const { sentence, character, anime } = json;
 
-    const message = `❖𝙌𝙐𝙊𝙏𝙀 ${sentence}\n\n❖𝘾𝙃𝘼𝙍𝘼𝘾𝙏𝙀𝙍 ${character}\n❖𝘼𝙉𝙄𝙈𝙀 ${anime}`;
+    const message = `❖𝐐𝐔𝐎𝐓𝐄\n${sentence}\n\n❖𝐂𝐇𝐀𝐑𝐀𝐂𝐓𝐄𝐑: \`\`\`${character}\`\`\`\n❖𝐀𝐍𝐈𝐌𝐄: \`\`\`${anime}\`\`\`\n`;
     conn.sendMessage(m.chat, { text: message }, 'extendedTextMessage', { quoted: m });
   } catch (error) {
     console.error(error);
@@ -15,7 +15,7 @@ const handler = async (m, { conn }) => {
 };
 
 handler.help = ['animequote'];
-handler.tags = ['internet'];
+handler.tags = ['group'];
 handler.command = /^(animequote)$/i;
 
 export default handler;
